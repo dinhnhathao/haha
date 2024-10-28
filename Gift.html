@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trải Nghiệm Tương Tác</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: pink;
+            overflow: hidden;
+            transition: background-color 3s;
+        }
+        #button {
+            padding: 20px 40px;
+            font-size: 24px;
+            color: white;
+            background-color: transparent;
+            border: 2px solid white;
+            cursor: pointer;
+            z-index: 10;
+        }
+        #fireworks, #stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 1;
+        }
+        #loveMessage {
+            position: absolute;
+            color: pink;
+            font-size: 48px;
+            opacity: 0;
+            transition: opacity 5s;
+            text-align: center;
+            z-index: 5;
+        }
+        .star {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 1.5s infinite;
+        }
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            opacity: 1;
+            transition: transform 5s ease, opacity 5s ease;
+        }
+        #catGif {
+            position: absolute;
+            bottom: 20px;
+            left: -200px;
+            width: 150px;
+            display: none;
+            z-index: 6;
+        }
+        .sparkle {
+            animation: sparkle 1s ease forwards;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        @keyframes sparkle {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.5); opacity: 0; }
+        }
+        @keyframes moveCat {
+            from { left: -200px; }
+            to { left: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <audio id="backgroundMusic" src="beat.mp3" preload="auto"></audio>
+    <div id="fireworks"></div>
+    <div id="stars"></div>
+    <button id="button" onclick="startAnimation()">Bấm vô ii</button>
+    <div id="loveMessage">Ai đọc thì bị khùng</div>
+    <img id="catGif" src="bee.gif" alt="Con mèo đáng yêu">
+
+    <script>
+        function startAnimation() {
+            const button = document.getElementById('button');
+            const fireworksContainer = document.getElementById('fireworks');
+            const starsContainer = document.getElementById('stars');
+            const loveMessage = document.getElementById('loveMessage');
+            const backgroundMusic = document.getElementById('backgroundMusic');
+
+            // Phát nhạc
+            backgroundMusic.play();
+
+            // Ẩn nút và chuyển nền thành màu hồng tối trước, rồi sang đen
+            button.style.display = 'none';
+            document.body.style.backgroundColor = '#d63384';
+
+            setTimeout(() => {
+                document.body.style.backgroundColor = 'black';
+
+                // Hiển thị các ngôi sao sau 1 giây
+                setTimeout(() => {
+                    starsContainer.style.display = 'block';
+                    createStars();
+                }, 1000);
+
+                // Hiệu ứng pháo hoa sau 3 giây
+                setTimeout(() => {
+                    starsContainer.style.display = 'none';
+                    fireworksContainer.style.display = 'block';
+                    createFireworks();
+                }, 4000);
+
+            }, 2000);
+        }
+
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * window.innerWidth}px`;
+                star.style.top = `${Math.random() * window.innerHeight}px`;
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function createFireworks() {
+            const fireworksContainer = document.getElementById('fireworks');
+            const colors = ['red', 'yellow', 'blue', 'pink'];
+            let count = 1000;
+
+            const interval = setInterval(() => {
+                if (count > 0) {
+                    const dot = document.createElement('div');
+                    const size = Math.random() * 10 + 5;
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+
+                    dot.style.position = 'absolute';
+                    dot.style.width = `${size}px`;
+                    dot.style.height = `${size}px`;
+                    dot.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    dot.style.borderRadius = '50%';
+                    dot.style.left = `${x}px`;
+                    dot.style.top = `${y}px`;
+                    dot.classList.add('sparkle');
+                    fireworksContainer.appendChild(dot);
+
+                    setTimeout(() => {
+                        dot.remove();
+                    }, 1000);
+
+                    count--;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        createHearts();
+                        showLoveMessage();
+                    }, 2000);
+                }
+            }, 7);
+        }
+
+        function createHearts() {
+            const heartColors = ['red', 'pink', 'purple'];
+            let count = 600;
+
+            const interval = setInterval(() => {
+                if (count > 0) {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.innerHTML = '❤️';
+                    const x = Math.random() * window.innerWidth;
+
+                    heart.style.left = `${x}px`;
+                    heart.style.top = `-30px`;
+                    document.body.appendChild(heart);
+
+                    setTimeout(() => {
+                        heart.style.transform = `translateY(${window.innerHeight + 30}px)`;
+                        heart.style.opacity = 0;
+                    }, 10);
+
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 5100);
+
+                    count--;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        showCatGif();
+                    }, 2000);
+                }
+            }, 15);
+        }
+
+        function showLoveMessage() {
+            const loveMessage = document.getElementById('loveMessage');
+            loveMessage.style.opacity = 1;
+        }
+
+        function showCatGif() {
+            const catGif = document.getElementById('catGif');
+            catGif.style.display = 'block';
+            catGif.style.animation = 'moveCat 5s linear';
+        }
+    </script>
+</body>
+</html>
